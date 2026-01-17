@@ -1,34 +1,27 @@
-# Hi, I'm Hugo GONCALVES 👋
+# .github Repository
 
-### 📊 Data Analyst & Software Engineer
+This repository is the central configuration hub for my GitHub ecosystem. It contains standardized templates, workflows, and tools that improve productivity and maintain consistency across my projects.
 
-I am a 23-year-old **Data Analyst Apprentice at Airbus**, currently pursuing a **Master's degree in Software & Data Engineering**. I am passionate about bridging the gap between data insights and robust software solutions.
+## 📂 Repository Structure
 
----
+- **`.github/ISSUE_TEMPLATE/`**: Standardized templates for bug reports and feature requests.
+- **`.github/workflows/`**: Automation pipelines for linting, branch protection, and project management.
+- **`profile/`**: Contains the source for my GitHub Profile presentation.
+- **`scripts/`**: DevOps scripts for automating project setup and Agile workflows.
 
-### 🚀 About Me
-- 🎓 **Education:** Master's in Software & Data Engineering.
-- 💼 **Current Role:** Data Analyst Apprentice @ **Airbus**.
-- ❤️ **Passions:** 
-  - **Tech:** AI, Data Science, and Automation.
-  - **Sports:** Rugby.
-  - **Culture:** Cinema.
+## 🛠️ Key Features
 
----
+- **Agile Mastery**: Native GitHub Project (v2) automation with custom fields for Story Points and Priority.
+- **DevOps Guardrails**: Automated PR source checking, linting (YAML/Markdown), and auto-labeling.
+- **Standardization**: Centrally managed issue and PR templates used across all repositories.
 
-### 🛠️ Configuration Hub
-This repository hosts my global GitHub configurations:
-- [Issue Templates](file:///Users/hugogoncalves/Developer/.github/ISSUE_TEMPLATE) (Bugs, Features)
-- [Pull Request Template](file:///Users/hugogoncalves/Developer/.github/PULL_REQUEST_TEMPLATE.md)
-- Workflows & Automation scripts.
+## 🚀 Getting Started
 
----
+If you're looking to set up an Agile project, use the included script:
+```bash
+./scripts/setup_agile_project.sh
+```
 
-### 🤝 Let's Connect!
-I am **open to work** and always looking for interesting projects to collaborate on! If you have a challenge or a project that needs a mix of Data and Engineering, feel free to reach out.
-
----
-
-<p align="center">
-  <i>"Passionate about AI, Data, automation, rugby and cinema."</i>
-</p>
+For more details on specific features, refer to:
+- [BRANCH_PROTECTION.md](BRANCH_PROTECTION.md)
+- [AGILE_PROJECT_SETUP.md](AGILE_PROJECT_SETUP.md)
