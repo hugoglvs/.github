@@ -1,8 +1,20 @@
 # Agile Project Setup on GitHub
 
-This guide explains how to replace Jira with a native GitHub Project (v2) for Scrum/Agile ceremonies.
+This repository contains tools and documentation to replace Jira with a native GitHub Project (v2) for Scrum/Agile ceremonies.
 
-## 1. Create the Project
+## 🚀 One-Click Setup (Fast Track)
+You can automate the creation of a new Agile project using the included script:
+```bash
+./scripts/setup_agile_project.sh
+```
+This script will:
+1. Create a new GitHub Project.
+2. Add the **Size (SP)** number field.
+3. Add the **Priority** (P0-P3) single-select field.
+
+---
+
+## 1. Manual Creation (Alternative)
 1. Go to your GitHub Profile or Organization.
 2. Select **Projects** > **New project**.
 3. Choose the **Table** or **Board** layout (Board is usually preferred for Sprints).
