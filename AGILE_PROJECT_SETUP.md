@@ -45,11 +45,22 @@ In the **Workflows** section of your GitHub Project:
 - **Auto-add to project**: Set a rule to automatically add issues with specific labels (e.g., `scrum:sprint`) to the project.
 - **Item closed**: Automatically move items to the `Done` column when an issue or PR is closed.
 
-## 5. Agile Ceremonies
-- **Backlog Grooming**: Filter items with the `scrum:backlog` label.
-- **Sprint Planning**: Move items from `Backlog` to the current `Iteration` (Sprint) field and assign `Size (SP)`.
-- **Daily Standup**: Use the **Board** view grouped by **Assignee** or **Status**.
+## 5. Agile Automation (Optional / Advanced)
+This repository includes a `project-automation.yml` workflow to automatically manage item states.
+
+### ⚠️ Engineer's Warning
+GitHub Projects (v2) has a built-in **"Workflows"** tab in the UI. For 90% of users, the UI version is **better** because:
+- No Personal Access Tokens (PAT) required.
+- No Action minutes consumed.
+- Zero maintenance.
+
+### Using the Advanced Action
+If you want to use the included `.github/workflows/project-automation.yml`:
+1. **Create a PAT**: Generat a Personal Access Token with the `project` scope.
+2. **Add Secret**: Add it to your repo as `PROJECT_AUTOMATION_TOKEN`.
+3. **Configure**: Update the `PROJECT_OWNER` and `PROJECT_NUMBER` in the workflow file.
 
 ---
-> [!TIP]
-> Use the `.github` repository as a template to ensure all new projects inherit the Issue Templates (`ISSUE_TEMPLATE/`) we've already defined.
+
+## 6. Success Message
+echo -e "\n${BLUE}======================================${NC}"

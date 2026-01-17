@@ -1,0 +1,74 @@
+name: Agile Project Automation
+
+# NOTE:
+# While this Action provides powerful "Infrastructure as Code" control,
+# for standard "Open -> In Progress" and "Close -> Done" movements,
+# using the built-in GitHub Project (v2) UI Workflows is often more
+# maintenance-free as it doesn't require PAT tokens or Action minutes.
+
+on:
+    issues:
+        types: [opened, reopened]
+    pull_request:
+        types: [opened, reopened, closed]
+
+jobs:
+    track_project:
+        runs-on: ubuntu-latest
+        # Required for advanced automation. You must create a PAT with 'project' scope
+        # and add it to your repo secrets as PROJECT_AUTOMATION_TOKEN.
+        env:
+            GITHUB_TOKEN: ${{ secrets.PROJECT_AUTOMATION_TOKEN }}
+            PROJECT_OWNER: "hugoglvs"
+            PROJECT_NUMBER: 1 # Change this to your actual project number
+
+        steps:
+            - name: Get Project Data
+              run: |
+                  gh api graphql -f query='
+                    query($owner: String!, $number: Int!) {
+                      user(login: $owner) {
+                        projectV2(number: $number) {
+                          id
+                          fields(first: 20) {
+                            nodes {
+                              ... on ProjectV2SingleSelectField {
+                                id
+                                name
+                                options {
+                                  id
+                                  name
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }' -f owner=$PROJECT_OWNER -F number=$PROJECT_NUMBER > project_data.json
+
+                  echo "PROJECT_ID=$(jq -r '.data.user.projectV2.id' project_data.json)" >> $GITHUB_ENV
+                  echo "STATUS_FIELD_ID=$(jq -r '.data.user.projectV2.fields.nodes[] | select(.name== "Status") | .id' project_data.json)" >> $GITHUB_ENV
+                  echo "TODO_OPTION_ID=$(jq -r '.data.user.projectV2.fields.nodes[] | select(.name== "Status") | .options[] | select(.name=="Todo") | .id' project_data.json)" >> $GITHUB_ENV
+                  echo "IN_PROGRESS_OPTION_ID=$(jq -r '.data.user.projectV2.fields.nodes[] | select(.name== "Status") | .options[] | select(.name=="In Progress") | .id' project_data.json)" >> $GITHUB_ENV
+                  echo "DONE_OPTION_ID=$(jq -r '.data.user.projectV2.fields.nodes[] | select(.name== "Status") | .options[] | select(.name=="Done") | .id' project_data.json)" >> $GITHUB_ENV
+
+            - name: Add to Project
+              if: github.event_name == 'issues' && github.event.action == 'opened'
+              run: |
+                  gh project item-add $PROJECT_NUMBER --owner $PROJECT_OWNER --url ${{ github.event.issue.html_url }}
+
+            - name: Move to In Progress
+              if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened')
+              run: |
+                  ITEM_ID=$(gh project item-list $PROJECT_NUMBER --owner $PROJECT_OWNER --format json | jq -r --arg url "${{ github.event.pull_request.html_url }}" '.items[] | select(.content.url == $url) | .id')
+                  if [ ! -z "$ITEM_ID" ]; then
+                    gh project item-edit --id $ITEM_ID --field-id $STATUS_FIELD_ID --project-id $PROJECT_ID --single-select-option-id $IN_PROGRESS_OPTION_ID
+                  fi
+
+            - name: Move to Done
+              if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+              run: |
+                  ITEM_ID=$(gh project item-list $PROJECT_NUMBER --owner $PROJECT_OWNER --format json | jq -r --arg url "${{ github.event.pull_request.html_url }}" '.items[] | select(.content.url == $url) | .id')
+                  if [ ! -z "$ITEM_ID" ]; then
+                    gh project item-edit --id $ITEM_ID --field-id $STATUS_FIELD_ID --project-id $PROJECT_ID --single-select-option-id $DONE_OPTION_ID
+                  fi
