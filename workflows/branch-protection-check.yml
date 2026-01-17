@@ -1,0 +1,23 @@
+name: Branch Protection Enforcement
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check-source-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify source branch
+        run: |
+          SOURCE_BRANCH="${{ github.head_ref }}"
+          EXPECTED_BRANCH="dev"
+          
+          echo "PR Source Branch: $SOURCE_BRANCH"
+          if [ "$SOURCE_BRANCH" != "$EXPECTED_BRANCH" ]; then
+            echo "::error::Only the 'dev' branch is allowed to be merged into 'main'. Found: '$SOURCE_BRANCH'"
+            exit 1
+          fi
+          echo "Source branch successfully verified as 'dev'."
