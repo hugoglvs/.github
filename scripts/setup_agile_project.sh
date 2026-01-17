@@ -37,12 +37,38 @@ gh project field-create "$PROJECT_NUMBER" --owner "$OWNER" --name "Priority" \
     --single-select-options "P0: Critical,P1: High,P2: Medium,P3: Low" > /dev/null
 echo -e "${GREEN}✓ Added field: Priority (P0-P3)${NC}"
 
-# 4. Success Message
+# 4. Link Repositories (Optional)
+echo -e "\n${BLUE}== Repository Linking ==${NC}"
+echo -e "Enter repository names (format: 'owner/repo' or just 'repo') to link to this project."
+echo -e "Leave blank and press Enter when finished."
+
+while true; do
+    read -p "Repository to link: " REPO_NAME
+    if [ -z "$REPO_NAME" ]; then
+        break
+    fi
+
+    # Check if REPO_NAME contains a slash (owner/repo)
+    if [[ "$REPO_NAME" != */* ]]; then
+        FULL_REPO="$(gh api user -q .login)/$REPO_NAME"
+    else
+        FULL_REPO="$REPO_NAME"
+    fi
+
+    echo -e "Linking ${FULL_REPO}..."
+    if gh project link "$PROJECT_NUMBER" --owner "$OWNER" --repo "$FULL_REPO" > /dev/null 2>&1; then
+        echo -e "${GREEN}✓ Linked: ${FULL_REPO}${NC}"
+    else
+        echo -e "\033[0;31m✗ Clear or invalid repository: ${FULL_REPO}\033[0m"
+    fi
+done
+
+# 5. Success Message
 echo -e "\n${BLUE}======================================${NC}"
 echo -e "${GREEN}Agile Project Setup Complete!${NC}"
 echo -e "URL: https://github.com/users/$(gh api user -q .login)/projects/${PROJECT_NUMBER}"
 echo -e "Next Steps:"
 echo -e "  1. Open the project in your browser."
-echo -e "  2. Add the 'Iteration' field (Sprint) via the UI (CLI support for Iterations is limited)."
+echo -e "  2. Add the 'Iteration' field (Sprint) via the UI."
 echo -e "  3. Start adding issues using 'gh project item-add'."
 echo -e "${BLUE}======================================${NC}"
