@@ -1,0 +1,19 @@
+# .github/labeler.yml
+# Configuration for the GitHub Labeler Action
+
+feature:
+  - branch: ["^feat/.*"]
+
+bug:
+  - branch: ["^fix/.*"]
+
+refactor:
+  - branch: ["^refactor/.*"]
+
+devops:
+  - changed-files:
+      - any-glob-to-any-file: ".github/**/*"
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: "README.md"
